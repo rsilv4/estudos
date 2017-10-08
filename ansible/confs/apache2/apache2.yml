@@ -1,0 +1,54 @@
+- hosts: webserver
+  vars:
+   porta_http: 80
+   dominio: apache.imagens15.hospedagemdesites.ws
+   diretorio: apache_imagens15_hospedagemdesites_ws
+
+  tasks:
+    - name: Update
+      apt:
+        update_cache: yes     
+
+      #Cria diretorio home    
+    - file:
+        path: /var/www/{{ diretorio }}
+        state: directory
+        mode: 0755
+
+    - name: Intalar pacotes
+      apt: name={{ item }} state=latest
+      with_items:
+        - apache2
+        - php5
+
+    - name: Habilitar modulo mod_rewrite
+      apache2_module: name=rewrite state=present
+      notify:
+        - restart apache2
+
+    - name: Configurar porta padrao ports.conf
+      lineinfile: dest=/etc/apache2/ports.conf regexp="^Listen " line="Listen {{ porta_http }}" state=present
+      notify:
+        - restart apache2
+
+    - name: Configurar porta vhost default
+      lineinfile: dest=/etc/apache2/sites-available/000-default.conf regexp="^<VirtualHost \*:" line="<VirtualHost *:{{ porta_http }}>"
+      notify:
+        - restart apache2
+
+    - name: Criar virtual host
+      template: src=/etc/ansible/files/apache2/vhost.conf dest=/etc/apache2/sites-available/{{ dominio }}.conf
+
+    - name: Ativar site 
+      command: a2ensite {{dominio}}
+      args:
+       creates: /etc/apache2/sites-enabled/{{ dominio }}.conf
+      notify:
+        - restart apache2
+
+    - name: Info PHP
+      shell: echo "<?php phpinfo(); ?>" > /var/www/{{ diretorio }}/info.php
+
+  handlers:
+    - name: restart apache2
+      service: name=apache2 state=restarted

@@ -1,0 +1,12 @@
+- hosts: master-node
+  tasks:
+   - name: Instalacao Apache2
+     apt: name=apache2 state=installed
+
+   notify:
+    - restart apache2
+
+  handlers:
+  - name: restart apache2
+    service: name=apache2 state=restarted
+
