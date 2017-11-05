@@ -27,8 +27,8 @@ resource "aws_db_instance" "blog_rds_01"{
     identifier = "bd-rds-blog"
     allocated_storage = 10
     engine = "mysql"
-    engine_version = "5.6.17"
-    instance_class = "db.t1.micro"
+    engine_version = "5.6.37"
+    instance_class = "db.t2.micro"
     name = "blog_db"
     username = "blog_db"
     password = "7201rns5"

@@ -1,13 +1,13 @@
 //Define uma rede
 resource "aws_vpc" "blog" {
-    cidr_block = "10.100.0.0/16"
+    cidr_block = "172.100.0.0/16"
 }
 
 //Define subrede
 resource "aws_subnet" "rede_1"{
     vpc_id = "${aws_vpc.blog.id}"
-    cidr_block = "${var.cidr_block_1}"
-    //map_public_ip_on_launch = "true"
+    cidr_block = "172.100.5.0/24"
+    map_public_ip_on_launch = "true"
     availability_zone = "sa-east-1a"
     tags{
         Name = "Rede Publica 1"
@@ -16,8 +16,8 @@ resource "aws_subnet" "rede_1"{
 
 resource "aws_subnet" "rede_2"{
     vpc_id = "${aws_vpc.blog.id}"
-    cidr_block = "${var.cidr_block_1}"
-    //map_public_ip_on_launch = "true"
+    cidr_block = "172.100.4.0/24"
+    map_public_ip_on_launch = "true"
     availability_zone = "sa-east-1c"
     tags{
         Name = "Rede Publica 2"
@@ -41,4 +41,3 @@ resource "aws_db_subnet_group" "blog_db"{
         Name = "Grupo de subnets blog"
     }
 }
-

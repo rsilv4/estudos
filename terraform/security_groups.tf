@@ -1,18 +1,12 @@
 //Regra para liberar trafego ssh
 resource "aws_security_group" "allow_ssh"{
     name = "allow_ssh"
-    description = "Libera trafego ssh"
+    description = "Libera trafego ssh e ICMP"
     vpc_id = "${aws_vpc.blog.id}"
 
     ingress {
         from_port = 22
         to_port = 22
-        protocol = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-        egress {
-        from_port = 1024
-        to_port = 65535
         protocol = "tcp"
         cidr_blocks = ["0.0.0.0/0"]
     }
@@ -33,12 +27,6 @@ resource "aws_security_group" "web_server"{
         protocol = "tcp"
         cidr_blocks = ["0.0.0.0/0"]
     }
-    egress{
-        from_port = 1024
-        to_port = 65535
-        protocol = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
 }
 
 //Cria security group para servidor de banco de dados
@@ -51,15 +39,6 @@ resource "aws_security_group" "mysql_blog"{
         from_port = 3306
         to_port = 3306
         protocol = "tcp"
-        cidr_blocks = ["${aws_instance.web01.private_ip}","${aws_instance.web02.private_ip}"]
-        //cidr_blocks = ["0.0.0.0/0"]
-        //,"${aws_instance.web0002.private_ip}"
-    }
-
-    egress {
-        from_port = 1024
-        to_port = 65535
-        protocol = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
+        cidr_blocks = ["${aws_subnet.rede_1.cidr_block}" , "${aws_subnet.rede_2.cidr_block}"]
     }
 }

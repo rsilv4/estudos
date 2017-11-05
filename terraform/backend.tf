@@ -1,7 +1,13 @@
 //Configuração load balancer
 resource "aws_elb" "web_elb"{
     name = "web-elb"
-    availability_zones = "${var.aws_zones}"
+    //availability_zones = ["us-east-2a" , "us-east-2b"]
+    subnets = ["${aws_subnet.rede_1.id}" , "${aws_subnet.rede_2.id}"]
+    instances = ["${aws_instance.web01.id}" , "${aws_instance.web02.id}"]
+    cross_zone_load_balancing = true
+    idle_timeout = 400
+    connection_draining = true
+    connection_draining_timeout = 400
     
     listener {
         instance_port = 80
@@ -17,13 +23,6 @@ resource "aws_elb" "web_elb"{
         target = "HTTP:80/"
         interval = 30
     }
-
-    instances = ["${aws_instance.web01.id}" , "${aws_instance.web02.id}"]
-
-    cross_zone_load_balancing = true
-    idle_timeout = 400
-    connection_draining = true
-    connection_draining_timeout = 400
 
     tags {
         Name = "Web ELB"
