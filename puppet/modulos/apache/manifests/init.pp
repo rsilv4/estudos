@@ -6,7 +6,7 @@ class apache (
 ) inherits ::apache::params {
 
   package { 'apache':
-    name => $apachename
+    name => $apachename,
     ensure => present,
   }
 }
